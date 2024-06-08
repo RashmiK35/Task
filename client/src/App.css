@@ -1,0 +1,152 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.header-container {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 2;
+  width: 100%;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-container h1 {
+  flex-grow: 1;
+  text-align: center;
+  color: #551154f5; /* Teal color for heading */
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.table-container {
+  width: 117%;
+  max-height: 532px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  border: 1px solid #BDC3C7;
+  position: relative;
+  background-color:  #FFFFFF;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table-wrapper {
+  position: relative;
+  display: block;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  position: relative;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  background-color: #0c4b43dd; /* Purple color for header */
+  color: white;
+  z-index: 3;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border: 1px solid #abaaaa;
+  word-wrap: break-word;
+}
+
+th:not(:last-child), td:not(:last-child) {
+  border-right: 1px solid rgba(205, 202, 202, 0.614); /* Red border between columns */
+}
+
+th {
+  background-color: #0c4b43dd; 
+  color: white;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #e6dfdf9a;
+}
+
+tbody tr:hover {
+  background-color: #edf5f8f8;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.pagination input[type="number"] {
+  width: 70px;
+  margin: 0 10px;
+  border-radius: 5px;
+}
+
+.pagination button {
+  margin: 0 5px;
+  background-color: #226392f2; /* Teal color for buttons */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+}
+
+.filter-input {
+  margin-bottom: 10px;
+}
+
+.filter-input label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.filter-input input {
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+button.teal-button {
+  background-color: #226392f2; /* Teal color for buttons */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+button.teal-button:disabled {
+  background-color: #ccc;
+}

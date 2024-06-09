@@ -13,7 +13,7 @@ import {
   ArcElement,
 } from 'chart.js';
 
-// Register the components
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -34,7 +34,7 @@ const Dashboard = () => {
       setLoading(true);
       try {
         const response = await axios.get('http://localhost:5000/api/data');
-        console.log('API Response:', response.data); // Log the API response
+        console.log('API Response:', response.data);
         if (Array.isArray(response.data.data)) {
           setData(response.data.data);
         } else {

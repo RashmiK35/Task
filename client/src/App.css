@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 10px;
 }
 
 .header-container {
@@ -21,7 +21,7 @@
 .header-container h1 {
   flex-grow: 1;
   text-align: center;
-  color: #551154f5; /* Teal color for heading */
+  color: #551154f5; 
 }
 
 .header-buttons {
@@ -56,7 +56,7 @@ table {
 thead {
   position: sticky;
   top: 0;
-  background-color: #0c4b43dd; /* Purple color for header */
+  background-color: #0c4b43dd; 
   color: white;
   z-index: 3;
 }
@@ -69,7 +69,7 @@ th, td {
 }
 
 th:not(:last-child), td:not(:last-child) {
-  border-right: 1px solid rgba(205, 202, 202, 0.614); /* Red border between columns */
+  border-right: 1px solid rgba(205, 202, 202, 0.614); 
 }
 
 th {
@@ -101,7 +101,7 @@ tbody tr:hover {
 
 .pagination button {
   margin: 0 5px;
-  background-color: #226392f2; /* Teal color for buttons */
+  background-color: #226392f2; 
   color: white;
   border: none;
   padding: 5px 10px;
@@ -140,7 +140,7 @@ tbody tr:hover {
 }
 
 button.teal-button {
-  background-color: #226392f2; /* Teal color for buttons */
+  background-color: #226392f2; 
   color: white;
   border: none;
   padding: 10px 20px;

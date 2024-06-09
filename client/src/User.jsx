@@ -60,7 +60,7 @@ const User = () => {
       setPage(newPage);
     }
     else {
-      setInvalidPage(true); // Set invalid page flag if page number is invalid
+      setInvalidPage(true);
     }
   };
 

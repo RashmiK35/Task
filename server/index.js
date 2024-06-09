@@ -18,8 +18,8 @@ const DataModel = mongoose.model('Data', dataSchema);
 
 app.use(cors());
 
-/*//to upload the data
-// it is a function to process and upload the Excel file in batches
+/*
+//to upload the data
 const processAndUpload = async (filePath, batchSize = 10000) => {
   const workbook = xlsx.readFile(filePath, { cellDates: true });
   const sheetName = workbook.SheetNames[0];
@@ -27,11 +27,10 @@ const processAndUpload = async (filePath, batchSize = 10000) => {
   const jsonData = xlsx.utils.sheet_to_json(sheet);
 
 
-  // Formatting date fields to desired format
+  // Formatting date fields into desired format
   const formattedData = jsonData.map((entry) => {
     const utcDate = new Date(entry['Report Date']);
     
-    // Get timezone offset in milliseconds and apply it to UTC date
     const timeZoneOffset = utcDate.getTimezoneOffset() * 60000;
     const localDate = new Date(utcDate.getTime() - timeZoneOffset);
 
@@ -41,13 +40,11 @@ const processAndUpload = async (filePath, batchSize = 10000) => {
     };
   });
 
-  // to split data into batches
   const batches = [];
   for (let i = 0; i < formattedData.length; i += batchSize) {
     batches.push(formattedData.slice(i, i + batchSize));
   }
 
-  // now to insert batches into MongoDB
   for (const batch of batches) {
     try {
       await DataModel.insertMany(batch);
@@ -63,11 +60,7 @@ const processAndUpload = async (filePath, batchSize = 10000) => {
 
 
 const filePath = 'C:\\Users\\VOSTRO\\Desktop\\Testing Observations.xlsx';
-processAndUpload(filePath);  
-  
-// excel file
-const filePath = 'C:\\Users\\VOSTRO\\Desktop\\Testing Observations.xlsx';
-processAndUpload(filePath)  
+processAndUpload(filePath);   
 */
 
 

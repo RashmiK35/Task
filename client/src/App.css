@@ -88,7 +88,7 @@ tbody tr:hover {
 .pagination {
   margin-top: 20px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
 }
@@ -101,6 +101,7 @@ tbody tr:hover {
 
 .pagination button {
   margin: 0 5px;
+  margin-left: 10px;
   background-color: #226392f2; 
   color: white;
   border: none;
@@ -150,3 +151,56 @@ button.teal-button {
 button.teal-button:disabled {
   background-color: #ccc;
 }
+
+.per-page-dropdown {
+  margin-right: 20px; /* Adjust as needed for spacing */
+}
+
+.per-page-dropdown label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.per-page-dropdown select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #f2f2f2;
+  font-size: 14px;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+}
+
+.error-message {
+  color: red;
+  margin-left: 10px;
+}
+
+.teal-button[title] {
+  position: relative;
+}
+
+.teal-button[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 70%; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.teal-button[title]:hover::after {
+  opacity: 1;
+}
+

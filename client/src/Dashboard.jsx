@@ -12,7 +12,7 @@ import {
   Legend,
   ArcElement,
 } from 'chart.js';
-
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 ChartJS.register(
   CategoryScale,
@@ -21,7 +21,8 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
+  ChartDataLabels
 );
 
 const Dashboard = () => {
@@ -53,20 +54,14 @@ const Dashboard = () => {
   }, []);
 
   const processData = () => {
-    const countsBySeverity = {
-      Critical: 0,
-      High: 0,
-      Informational: 0,
-      Low: 0,
-      Medium: 0,
-    };
+    const countsBySeverity = {};
 
     const countsByIssueName = {};
 
     if (Array.isArray(data)) {
       data.forEach(item => {
-        if (item.Severity in countsBySeverity) {
-          countsBySeverity[item.Severity]++;
+        if (item['Severity']) {
+          countsBySeverity[item['Severity']] = (countsBySeverity[item['Severity']] || 0) + 1;
         }
         if (item['Issue Name']) {
           countsByIssueName[item['Issue Name']] = (countsByIssueName[item['Issue Name']] || 0) + 1;
@@ -199,6 +194,21 @@ const Dashboard = () => {
     ],
   };
 
+  const chartOptions = {
+    plugins: {
+      datalabels: {
+        display: true,
+        color: 'black',
+        align: 'start',
+        anchor: 'end',
+        font: {
+          size: 11,
+          weight: 'bold',
+        },
+      },
+    },
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -213,14 +223,24 @@ const Dashboard = () => {
         {`
           .dashboard {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
           }
 
+          .chart-row {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 70px;
+          }
+
           .chart-container {
-            width: 40%;
-            margin-bottom: 20px;
+            width: 45%;
+          }
+
+          .chart-container.small {
+            width: 35%;
           }
 
           .chart-container h2 {
@@ -264,21 +284,25 @@ const Dashboard = () => {
         <h1>Dashboard</h1>
       </div>
       <div className="dashboard">
-        <div className="chart-container">
-          <h2>Bar Chart: Severity Distribution</h2>
-          <Bar data={barChartDataSeverity} />
+        <div className="chart-row">
+          <div className="chart-container">
+            <h2>Bar Chart: Severity Distribution</h2>
+            <Bar data={barChartDataSeverity} options={chartOptions} />
+          </div>
+          <div className="chart-container small">
+            <h2>Pie Chart: Severity Distribution</h2>
+            <Pie data={pieChartDataSeverity} options={chartOptions} />
+          </div>
         </div>
-        <div className="chart-container">
-          <h2>Pie Chart: Severity Distribution</h2>
-          <Pie data={pieChartDataSeverity} />
-        </div>
-        <div className="chart-container">
-          <h2>Bar Chart: Issue Name Distribution</h2>
-          <Bar data={barChartDataIssueName} />
-        </div>
-        <div className="chart-container">
-          <h2>Pie Chart: Issue Name Distribution</h2>
-          <Pie data={pieChartDataIssueName} />
+        <div className="chart-row">
+          <div className="chart-container">
+            <h2>Bar Chart: Issue Name Distribution</h2>
+            <Bar data={barChartDataIssueName} options={chartOptions} />
+          </div>
+          <div className="chart-container small">
+            <h2>Pie Chart: Issue Name Distribution</h2>
+            <Pie data={pieChartDataIssueName} options={chartOptions} />
+          </div>
         </div>
       </div>
     </div>

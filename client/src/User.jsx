@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css'
 import { Link } from 'react-router-dom';
-import { Button, Modal} from 'react-bootstrap';
+import { Button, Modal, Spinner} from 'react-bootstrap';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter, faFileExport, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faFileExport, faArrowLeft, faArrowRight, faFileImport } from '@fortawesome/free-solid-svg-icons';
 
 const User = () => {
   const [data, setData] = useState([]);
@@ -14,24 +14,23 @@ const User = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
-  const [pages, setPages] = useState(1);
-  const [limit] = useState(50);
+  //const [pages, setPages] = useState(1);
+  const [perPage,setPerPage] = useState(50);
   const [inputPage, setInputPage] = useState('');
   const [invalidPage, setInvalidPage] = useState(false);
   const [filters, setFilters] = useState({});
   const [showFilterModal, setShowFilterModal] = useState(false);
+  //const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:5000/api/data', {
-          params: { page, limit },
-        });
+        const response = await axios.get('http://localhost:5000/api/data');
         setData(response.data.data);
         setFilteredData(response.data.data);
-        setPages(response.data.pages);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -41,10 +40,10 @@ const User = () => {
     };
 
     fetchData();
-  }, [page, limit]);
+  }, []);
 
   const handlePageChange = (newPage) => {
-    if (newPage > 0 && newPage <= pages) {
+    if (newPage > 0 && newPage <= Math.ceil(filteredData.length / perPage)) {
       setPage(newPage);
     }
   };
@@ -56,7 +55,7 @@ const User = () => {
 
   const handleInputSubmit = () => {
     const newPage = parseInt(inputPage);
-    if (newPage > 0 && newPage <= pages) {
+    if (newPage > 0 && newPage <= Math.ceil(filteredData.length / perPage)) {
       setPage(newPage);
     }
     else {
@@ -72,12 +71,13 @@ const User = () => {
   };
 
   const applyFilters = () => {
-    let filtered = data.filter(item => {
+    let filtered = data.filter((item) => {
       return Object.keys(filters).every(key => {
         return item[key].toString().toLowerCase().includes(filters[key].toLowerCase());
       });
     });
     setFilteredData(filtered);
+    setPage(1); 
   };
 
   const handleFilterSubmit = () => {
@@ -130,15 +130,49 @@ const User = () => {
     }
 };
 
+const handleFileChange = async (e) => {
+  const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
 
-  
-  if (loading) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    setLoading(true);
+    setSuccessMessage('');
+    setError(null);
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setSuccessMessage(response.data);
+    } catch (err) {
+      console.error('Error uploading file:', err);
+      setError(err);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
+  /*if (!loading) {
     return <div>Loading...</div>;
   }
 
   if (error) {
     return <div>Error: {error.message}</div>;
-  }
+  }*/
+
+    const getSerialNumber = (index) => {
+      return (page - 1) * perPage + index + 1;
+    };
+
+    const paginatedData = filteredData.slice((page - 1) * perPage, page * perPage);
+
 
   return (
     <div className="container">
@@ -146,12 +180,27 @@ const User = () => {
       <Link to="/dashboard"><Button className="teal-button">Dashboard</Button></Link>
         <h1>SAMPLE DATA</h1>
         <div className="header-buttons">
-          <Button className="teal-button" onClick={() => setShowFilterModal(true)}>
+        <input type="file" onChange={handleFileChange} style={{ display: 'none' }} id="fileUpload" />
+          <Button className="teal-button" onClick={() => document.getElementById('fileUpload').click()} title="Import" >
+          <FontAwesomeIcon icon={faFileImport} />
+          </Button>
+          <Button className="teal-button" onClick={() => setShowFilterModal(true)} title="Filter">
             <FontAwesomeIcon icon={faFilter} />
           </Button>
-          <Button className="teal-button" onClick={exportToExcel}>
+          <Button className="teal-button" onClick={exportToExcel} title="Export">
             <FontAwesomeIcon icon={faFileExport} />
           </Button>
+          
+          {loading && (
+        <div>
+          <Spinner animation="border" role="status">
+            <span className="sr-only">Uploading...</span>
+          </Spinner>
+          <span> Loading...</span>
+        </div>
+      )}
+      {successMessage && <div>{successMessage}</div>}
+      {error && <div>Error uploading file: {error.message}</div>}
       </div>
       </div>
       <div className="table-container">
@@ -159,14 +208,16 @@ const User = () => {
           <table>
             <thead>
               <tr>
-                {data.length > 0 && Object.keys(data[0]).map((key) => (
+              <th>Serial No.</th>
+                {paginatedData.length > 0 && Object.keys(paginatedData[0]).map((key) => (
                   key !== '_id' && key !== '__v' && <th key={key}>{key}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-            {filteredData.map((item) => (
-                <tr key={item['service port']}>
+            {paginatedData.map((item, index) => (
+                <tr key={item._id || index}>
+                  <td>{getSerialNumber(index)}</td>
                   {Object.entries(item).map(([key, value]) => (
                     key !== '_id' && key !== '__v' && <td key={key}>{value}</td>
                   ))}
@@ -177,21 +228,34 @@ const User = () => {
         </div>
       </div>
       <div className="pagination">
+       <div className="per-page-dropdown">
+<label>Number of rows:</label>
+<select value={perPage} onChange={(e) => setPerPage(parseInt(e.target.value))}>
+<option value={10}>10</option>
+<option value={20}>20</option>
+<option value={50}>50</option>
+<option value={100}>100</option>
+<option value={500}>500</option>
+<option value={1000}>1000</option>
+</select>
+</div>
+<div className="pagination-controls">
         <button className="teal-button" onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
         <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <span> Page {page} of {pages} </span>
-        <button className="teal-button" onClick={() => handlePageChange(page + 1)} disabled={page === pages}>
+        <span> Page {page} of {Math.ceil(filteredData.length / perPage)} </span>
+        <button className="teal-button" onClick={() => handlePageChange(page + 1)} disabled={page ===Math.ceil(filteredData.length / perPage)}>
         <FontAwesomeIcon icon={faArrowRight} />
         </button>
         <input 
           type="number" 
           value={inputPage} 
           onChange={handleInputChange} 
-          placeholder={`Page 1 - ${pages}`} 
+          placeholder={`Page 1 - ${Math.ceil(filteredData.length / perPage)}`} 
         />
         <button className="teal-button" onClick={handleInputSubmit}>Go</button>
         {invalidPage && <span style={{ color: 'red', marginLeft: '10px' }}>Invalid page</span>}
+      </div>
       </div>
       <Modal show={showFilterModal} onHide={() => setShowFilterModal(false)}>
         <Modal.Header closeButton>
@@ -217,6 +281,7 @@ const User = () => {
           <Button className="teal-button" onClick={handleFilterSubmit}>Apply Filters</Button>
         </Modal.Footer>
       </Modal>
+      
     </div>
   );
 };
